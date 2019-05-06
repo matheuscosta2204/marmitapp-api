@@ -1,4 +1,6 @@
 {
-    "mongoURI": "mongodb+srv://matheuscosta:KfdIGVIfA@marmitapp-terym.gcp.mongodb.net/test?retryWrites=true",
+    "mongoURI": "mongodb://localhost:27017/marmitapp",
     "jwtSecret": "atomicBanana"
 }
+
+/*"mongoURI": "mongodb+srv://matheuscosta:KfdIGVIfA@marmitapp-terym.gcp.mongodb.net/test?retryWrites=true",*/
