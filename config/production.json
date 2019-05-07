@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://matheuscosta:KfdIGVIfA@marmitapp-terym.gcp.mongodb.net/test?retryWrites=true",
+    "jwtSecret": "atomicBanana"
+}
