@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const auth = require('../../middleware/auth');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -9,9 +10,17 @@ const { check, validationResult } = require('express-validator/check');
 const User = require('../../models/User');
 
 // @route   GET api/users/
-// @desc    Test route
+// @desc    Get all users
 // @access  Public
-router.get('/', (req, res) => res.send('User route'));
+router.get('/', auth, async (req, res) => {
+    try {        
+        const users = await User.find();
+        res.send(users);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
 
 // @route   POST api/users/
 // @desc    Register route
