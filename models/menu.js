@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const MenuSchema = new mongoose.Schema({
     restaurant: {
@@ -7,7 +8,7 @@ const MenuSchema = new mongoose.Schema({
     },
     date: {
         type: Date,
-        default: Date.now
+        default: moment().format('YYYY-MM-DD')
     },
     mainDishes: {
         type: [{

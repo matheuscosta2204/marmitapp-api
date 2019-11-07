@@ -88,7 +88,42 @@ router.post(
             console.error(err.message);
             return res.status(500).send('Server error');
         }
-    });
+    }
+);
 
+// @route   PUT api/users/favorites
+// @desc    update users' favorites restaurants
+// @access  Public
+router.put(
+    '/', 
+    [
+        auth,
+        [
+            check('id', 'Id is required').not().isEmpty(),
+            check('favorites', 'Please check favorites list').not().isEmpty()
+        ]
+    ], 
+    async (req, res) => {      
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { id, favorites } = req.body;
+
+        try {
+
+            const user = await User.findOne({ _id: id });
+
+            user.favorites = favorites;
+
+            await user.save();
+
+            res.send(user);
+        } catch (err) {
+            console.error(err.message);
+            res.status(500).send('Server Error');
+        }
+});
 
 module.exports = router;

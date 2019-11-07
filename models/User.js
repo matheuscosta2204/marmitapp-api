@@ -17,14 +17,12 @@ const UserSchema = new mongoose.Schema({
     avatar: {
         type: String,
     },
-    favorites: [
-        {
-            user: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'restaurant'
-            }
-        }
-    ],
+    favorites: {
+        user: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'restaurant'
+        }]
+    },
     date: {
         type: Date,
         default: Date.now

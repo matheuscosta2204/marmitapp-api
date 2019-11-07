@@ -8,6 +8,7 @@ const { check, validationResult } = require('express-validator/check');
 const { checkCNPJ } = require('../../helper/util');
 
 const Restaurant = require('../../models/restaurant');
+const User = require('../../models/User');
 
 // @route   GET api/restaurant/
 // @desc    get all restaurants
@@ -30,6 +31,35 @@ router.get('/:id', auth, async (req, res) => {
         const { id } = req.params;
         const restaurant = await Restaurant.findOne({ _id: id });
         res.send(restaurant);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   GET api/restaurant/filter/:filter
+// @desc    get restaurants with filter
+// @access  Public
+router.get('/filter/:filter', auth, async (req, res) => {
+    try {
+        const { filter } = req.params;
+        const restaurants = await Restaurant.find({ name: filter });
+        res.send(restaurants);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   GET api/restaurant/favorites/:id
+// @desc    get favorites restaurants of a user
+// @access  Public
+router.get('/favorites/:id', auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.find({ _id: id });
+        const restaurants = await Restaurant.find({ _id: { $in: user.favorites }});
+        res.send(restaurants);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
