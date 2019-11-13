@@ -80,7 +80,7 @@ router.post(
         if(!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
+        
         const { email, password } = req.body;
 
         try {
@@ -101,13 +101,14 @@ router.post(
                     id: restaurant.id
                 }
             }
-
+            
             jwt.sign(
                 payload, 
                 config.get('jwtSecret'),
                 { expiresIn: 360000 },
                 (err, token) => {
                     if (err) throw err;
+                    console.log(token);
                     res.json({ token });
                 }
             );
