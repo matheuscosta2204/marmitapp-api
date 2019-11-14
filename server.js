@@ -9,6 +9,13 @@ connectDB();
 // Init Middleware
 app.use(express.json({ extended: false }));
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth-token");
+    next();
+ });
+
 app.get('/', (req, res) => res.send('API Running'));
 
 // Define Routes

@@ -66,6 +66,18 @@ router.post(
     }
 );
 
+// @route   GET api/auth/restaurants
+// @desc    Authenticate restaurants & get token
+// @access  Public
+router.get('/restaurants', auth, async (req, res) => {
+    try {
+        const restaurant = await Restaurant.findById(req.user.id).select('-password');
+        res.json(restaurant);
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+})
+
 // @route   POST api/auth/restaurants
 // @desc    Authenticate restaurants & get token
 // @access  Public
@@ -97,7 +109,7 @@ router.post(
             }
 
             const payload = {
-                restaurant: {
+                user: {
                     id: restaurant.id
                 }
             }
@@ -108,7 +120,6 @@ router.post(
                 { expiresIn: 360000 },
                 (err, token) => {
                     if (err) throw err;
-                    console.log(token);
                     res.json({ token });
                 }
             );
