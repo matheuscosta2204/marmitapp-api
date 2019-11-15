@@ -77,7 +77,7 @@ router.post(
             let menu = await Menu.findOne({ date });
 
             if (menu) {
-                return res.status(400).json({ erros: [{ msg: 'Already exists menu to this date' }] });
+                return res.status(400).json({ errors: [{ msg: 'Already exists menu to this date' }] });
             }
 
             menu = new Menu({
@@ -129,7 +129,7 @@ router.put(
             let menu = await Menu.findOne({ _id: id });
 
             if (!menu) {
-                return res.status(400).json({ erros: [{ msg: 'Menu does not exists' }] });
+                return res.status(400).json({ errors: [{ msg: 'Menu does not exists' }] });
             }
 
             menu.date = date;
@@ -162,7 +162,7 @@ router.delete('/:id', auth,
             let menu = await Menu.findOne({ _id: id });
 
             if (!menu) {
-                return res.status(400).json({ erros: [{ msg: 'Menu does not exists' }] });
+                return res.status(400).json({ errors: [{ msg: 'Menu does not exists' }] });
             }
 
             await restaurant.remove({ _id: id });

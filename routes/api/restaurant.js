@@ -40,11 +40,16 @@ router.get('/:id', auth, async (req, res) => {
 // @route   GET api/restaurant/filter/:filter
 // @desc    get restaurants with filter
 // @access  Public
-router.get('/filter/:filter', auth, async (req, res) => {
+router.get('/filter/:filter', async (req, res) => {
     try {
         const { filter } = req.params;
-        const restaurants = await Restaurant.find({ name: filter });
-        res.send(restaurants);
+        const restaurants = await Restaurant.find({ $or:[{ name: { $regex: '.*' + filter + '.*', $options: 'i' } }, { address: { $regex: '.*' + filter + '.*', $options: 'i' } }] });
+        
+        const response = restaurants.map(restaurant => { 
+            return { name: restaurant.name, address: restaurant.address }  
+        });
+
+        res.send(response);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -72,13 +77,10 @@ router.get('/favorites/:id', auth, async (req, res) => {
 router.post(
     '/', 
     [
-        auth,
-        [
-            check('name', 'Name is required').not().isEmpty(),
-            check('cnpj', 'Please include a valid CNPJ').not().isEmpty().custom(value => checkCNPJ(value)),
-            check('email', 'Please include a valid email').isEmail(),
-            check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
-        ]
+        check('name', 'Name is required').not().isEmpty(),
+        check('cnpj', 'Please include a valid CNPJ').not().isEmpty().custom(value => checkCNPJ(value)),
+        check('email', 'Please include a valid email').isEmail(),
+        check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
     ], 
     async (req, res) => {
         const errors = validationResult(req);
@@ -93,7 +95,7 @@ router.post(
             let restaurant = await Restaurant.findOne({ $or:[{ cnpj }, { name }, { email }] });
 
             if (restaurant) {
-                return res.status(400).json({ erros: [{ msg: 'Restaurant already exists' }] });
+                return res.status(400).json({ errors: [{ msg: 'Restaurant already exists' }] });
             }
 
             restaurant = new Restaurant({
@@ -110,7 +112,7 @@ router.post(
             await restaurant.save();
 
             const payload = {
-                restaurant: {
+                user: {
                     id: restaurant.id
                 }
             }
@@ -161,7 +163,7 @@ router.put(
             let restaurant = await Restaurant.findOne({ _id: id });
 
             if (!restaurant) {
-                return res.status(400).json({ erros: [{ msg: 'Restaurant does not exists' }] });
+                return res.status(400).json({ errors: [{ msg: 'Restaurant does not exists' }] });
             }
 
             restaurant.zipCode = zipCode;
@@ -194,7 +196,7 @@ router.delete('/:id', auth,
             let restaurant = await Restaurant.findOne({ _id: id });
 
             if (!restaurant) {
-                return res.status(400).json({ erros: [{ msg: 'Restaurant does not exists' }] });
+                return res.status(400).json({ errors: [{ msg: 'Restaurant does not exists' }] });
             }
 
             await restaurant.remove({ _id: id });

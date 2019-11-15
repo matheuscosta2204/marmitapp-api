@@ -66,6 +66,18 @@ router.post(
     }
 );
 
+// @route   GET api/auth/restaurants
+// @desc    Authenticate restaurants & get token
+// @access  Public
+router.get('/restaurants', auth, async (req, res) => {
+    try {
+        const restaurant = await Restaurant.findById(req.user.id).select('-password');
+        res.json(restaurant);
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+})
+
 // @route   POST api/auth/restaurants
 // @desc    Authenticate restaurants & get token
 // @access  Public
@@ -80,7 +92,7 @@ router.post(
         if(!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-
+        
         const { email, password } = req.body;
 
         try {
@@ -97,11 +109,11 @@ router.post(
             }
 
             const payload = {
-                restaurant: {
+                user: {
                     id: restaurant.id
                 }
             }
-
+            
             jwt.sign(
                 payload, 
                 config.get('jwtSecret'),
