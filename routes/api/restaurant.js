@@ -26,10 +26,14 @@ router.get('/', auth, async (req, res) => {
 // @route   GET api/restaurant/:id
 // @desc    get restaurant by id
 // @access  Public
-router.get('/:id', auth, async (req, res) => {
+router.get('/current', auth, async (req, res) => {
     try {
-        const { id } = req.params;
-        const restaurant = await Restaurant.findOne({ _id: id });
+        const restaurant = await Restaurant.findOne({ _id: req.user.id });
+
+        if(!restaurant) {
+            return res.status(500).json({ msg: 'There is no restaurant for this user' });
+        }
+
         res.send(restaurant);
     } catch (err) {
         console.error(err.message);
@@ -51,7 +55,6 @@ router.get('/filter/:filter', async (req, res) => {
 
         res.send(response);
     } catch (err) {
-        console.error(err.message);
         res.status(500).send('Server Error');
     }
 });
@@ -134,20 +137,16 @@ router.post(
     }
 );
 
-// @route   PUT api/restaurant/completeinfo
-// @desc    complete the restaurant's information
+// @route   PUT api/restaurant/password
+// @desc    change the password validating the old one
 // @access  Public
 router.put(
-    '/completeinfo',
+    '/password',
     [
         auth,
         [
-            check('id', 'Id is required').not().isEmpty(),
-            check('zipCode', 'Please include a valid zip code').not().isEmpty().isNumeric(),
-            check('number', 'Please include a valid street number').not().isEmpty().isNumeric(),
-            check('phone', 'Please include a valid phone').not().isEmpty().isNumeric(),
-            check('logo', 'Logo is required').not(),
-            check('active', 'Active indicator is required').not()
+            check('password', 'Please include a valid password').not().isEmpty(),
+            check('newPassword', 'Please enter a new password with 6 or more characters').not().isEmpty().isLength({ min: 6 }),
         ]
     ],
     async (req, res) => {
@@ -156,7 +155,8 @@ router.put(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { id, zipCode, number, phone, logo, active } = req.body;
+        const { id } = req.user;
+        const { password, newPassword } = req.body;
 
         try {
 
@@ -166,6 +166,61 @@ router.put(
                 return res.status(400).json({ errors: [{ msg: 'Restaurant does not exists' }] });
             }
 
+            const isMatch = await bcrypt.compare(password, restaurant.password);
+
+            if(!isMatch) {
+                return res.status(400).json({ errors: [{ msg: 'The old password is incorrect' }] });
+            }
+
+            const salt = await bcrypt.genSalt(10);
+
+            restaurant.password = await bcrypt.hash(newPassword, salt);
+
+            await restaurant.save();
+
+            res.send(restaurant);
+
+        } catch (err) {
+            console.error(err.message);
+            return res.status(500).send('Server error');
+        }
+    }
+);
+
+// @route   PUT api/restaurant/completeinfo
+// @desc    complete the restaurant's information
+// @access  Public
+router.put(
+    '/completeinfo',
+    [
+        auth,
+        [
+            check('address', 'Please include a valid address').not().isEmpty(),
+            check('zipCode', 'Please include a valid zip code').not().isEmpty().isNumeric(),
+            check('number', 'Please include a valid street number').not().isEmpty().isNumeric(),
+            check('phone', 'Please include a valid phone').not().isEmpty().isNumeric(),
+            check('logo', 'Logo is required').not().isEmpty(),
+            check('active', 'Active indicator is required').not()
+        ]
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { id } = req.user;
+        const { address, zipCode, number, phone, logo, active } = req.body;
+
+        try {
+
+            let restaurant = await Restaurant.findOne({ _id: id });
+
+            if (!restaurant) {
+                return res.status(400).json({ errors: [{ msg: 'Restaurant does not exists' }] });
+            }
+
+            restaurant.address = address
             restaurant.zipCode = zipCode;
             restaurant.number = number;
             restaurant.phone = phone;

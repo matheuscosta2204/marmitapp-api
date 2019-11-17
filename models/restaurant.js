@@ -21,18 +21,24 @@ const RestaurantSchema = new mongoose.Schema({
     },
     zipCode: {
         type: String,
+        default: ''
     },
     address: {
         type: String,
+        default: ''
     },
     number: {
         type: String,
+        default: ''
     },
     phone: {
         type: String,
+        default: ''
     },
     logo: {
-        type: String
+        type: String,
+        default: ''
+        
     },
     active: {
         type: Boolean,
