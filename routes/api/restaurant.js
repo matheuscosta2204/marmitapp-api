@@ -41,6 +41,21 @@ router.get('/current', auth, async (req, res) => {
     }
 });
 
+// @route   GET api/restaurant/filter/:filter/:page/:limit
+// @desc    get restaurants with filter
+// @access  Public
+router.get('/filter/:filter/:page/:limit', async (req, res) => {
+    try {
+        const { filter, page, limit } = req.params;
+        const restaurants = await Restaurant.find({ $or:[{ name: { $regex: '.*' + filter + '.*', $options: 'i' } }, { address: { $regex: '.*' + filter + '.*', $options: 'i' } }] })
+                                            .skip((limit * page) - limit)
+                                            .limit(limit);
+        res.send(restaurants);
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+});
+
 // @route   GET api/restaurant/filter/:filter
 // @desc    get restaurants with filter
 // @access  Public
