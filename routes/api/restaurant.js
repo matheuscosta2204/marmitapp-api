@@ -52,7 +52,7 @@ router.get('/filter/:filter/:page/:limit', async (req, res) => {
                                             .limit(limit);
         res.send(restaurants);
     } catch (err) {
-        res.status(500).send('Server Error');
+        res.status(500).send('Server Error', err);
     }
 });
 
