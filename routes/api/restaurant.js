@@ -48,11 +48,11 @@ router.get('/filter/:filter/:page/:limit', async (req, res) => {
     try {
         const { filter, page, limit } = req.params;
         const restaurants = await Restaurant.find({ name: { $regex: '.*' + filter + '.*', $options: 'i' } })
-                                            .skip((limit * page) - limit)
-                                            .limit(limit);
+                                            .skip((Number(limit) * page) - Number(limit))
+                                            .limit(Number(limit));
         res.send(restaurants);
     } catch (err) {
-        res.status(500).send('Server Error', err);
+        res.status(500).send(err);
     }
 });
 
