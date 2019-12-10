@@ -47,7 +47,7 @@ router.get('/current', auth, async (req, res) => {
 router.get('/filter/:filter/:page/:limit', async (req, res) => {
     try {
         const { filter, page, limit } = req.params;
-        const restaurants = await Restaurant.find({ $or:[{ name: { $regex: '.*' + filter + '.*', $options: 'i' } }, { address: { $regex: '.*' + filter + '.*', $options: 'i' } }] })
+        const restaurants = await Restaurant.find({ name: { $regex: '.*' + filter + '.*', $options: 'i' } })
                                             .skip((limit * page) - limit)
                                             .limit(limit);
         res.send(restaurants);
