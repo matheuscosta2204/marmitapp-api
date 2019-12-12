@@ -41,23 +41,30 @@ router.get('/current', auth, async (req, res) => {
     }
 });
 
+// @route   GET api/restaurant/filter/:page/:limit
+// @desc    get restaurants without filter but with pagination
+// @access  Public
+router.get('/filter/:page/:limit', async (req, res) => {
+    try {
+        const { page, limit } = req.params;
+        const restaurants = await Restaurant.find()
+                                            .skip((Number(limit) * page) - Number(limit))
+                                            .limit(Number(limit));
+        res.send(restaurants);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
 // @route   GET api/restaurant/filter/:filter/:page/:limit
-// @desc    get restaurants with filter
+// @desc    get restaurants with filter and pagination
 // @access  Public
 router.get('/filter/:filter/:page/:limit', async (req, res) => {
     try {
         const { filter, page, limit } = req.params;
-        let restaurants = {};
-        if(filter !== '') {
-            restaurants = await Restaurant.find({ name: { $regex: '.*' + filter + '.*', $options: 'i' } })
+        const restaurants = await Restaurant.find({ name: { $regex: '.*' + filter + '.*', $options: 'i' } })
                                             .skip((Number(limit) * page) - Number(limit))
                                             .limit(Number(limit));
-        } else {
-            restaurants = await Restaurant.find()
-                                            .skip((Number(limit) * page) - Number(limit))
-                                            .limit(Number(limit));
-        }
-        
         res.send(restaurants);
     } catch (err) {
         res.status(500).send(err);
