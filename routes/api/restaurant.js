@@ -47,9 +47,17 @@ router.get('/current', auth, async (req, res) => {
 router.get('/filter/:filter/:page/:limit', async (req, res) => {
     try {
         const { filter, page, limit } = req.params;
-        const restaurants = await Restaurant.find({ name: { $regex: '.*' + filter + '.*', $options: 'i' } })
+        let restaurants = {};
+        if(filter !== '') {
+            restaurants = await Restaurant.find({ name: { $regex: '.*' + filter + '.*', $options: 'i' } })
                                             .skip((Number(limit) * page) - Number(limit))
                                             .limit(Number(limit));
+        } else {
+            restaurants = await Restaurant.find()
+                                            .skip((Number(limit) * page) - Number(limit))
+                                            .limit(Number(limit));
+        }
+        
         res.send(restaurants);
     } catch (err) {
         res.status(500).send(err);
