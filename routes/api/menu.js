@@ -23,9 +23,23 @@ router.get('/', auth, async (req, res) => {
 // @route   GET api/menu/restaurant
 // @desc    get menus by restaurant
 // @access  Public
-router.get('/restaurant/', auth, async (req, res) => {
+router.get('/restaurant', auth, async (req, res) => {
     try {
         const { id } = req.user;
+        const menus = await Menu.find({ restaurant: id });
+        res.send(menus);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   GET api/menu/restaurant/id
+// @desc    get menus by restaurant
+// @access  Public
+router.get('/restaurant/:id', auth, async (req, res) => {
+    try {
+        const { id } = req.params;
         const menus = await Menu.find({ restaurant: id });
         res.send(menus);
     } catch (err) {
