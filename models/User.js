@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema({
         type: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'restaurant'
-        }],
+        }]
     },
     date: {
         type: Date,
