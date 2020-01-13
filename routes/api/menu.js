@@ -12,7 +12,7 @@ const Menu = require('../../models/menu');
 // @access  Public
 router.get('/', auth, async (req, res) => {
     try {
-        const menus = await Menu.find({ date: moment().format('YYYY-MM-DD') });
+        const menus = await Menu.find();
         res.send(menus);
     } catch (err) {
         console.error(err.message);
@@ -20,7 +20,21 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
-// @route   GET api/menu/restaurant/:id
+// @route   GET api/menu/restaurant
+// @desc    get menus by restaurant
+// @access  Public
+router.get('/restaurant', auth, async (req, res) => {
+    try {
+        const { id } = req.user;
+        const menus = await Menu.find({ restaurant: id });
+        res.send(menus);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   GET api/menu/restaurant/id
 // @desc    get menus by restaurant
 // @access  Public
 router.get('/restaurant/:id', auth, async (req, res) => {
@@ -56,12 +70,11 @@ router.post(
     [
         auth,
         [
-            check('restaurant', 'Restaurant is required').not().isEmpty(),
-            check('date', 'Date is required').not().isEmpty(), //YYYY-MM-DD
-            check('mainDishes', 'Please check the main dishes').not().isArray().custom(array => array.lenght <= 3),
-            check('sideDishes', 'Please check the side dishes').not().isArray().custom(array => array.lenght <= 5),
-            check('salads', 'Please check the salads').not().isArray().custom(array => array.lenght <= 3),
-            check('desserts', 'Please check the desserts').not().isArray().custom(array => array.lenght <= 3),
+            check('date', 'Date is required').not().isEmpty(), //DD/MM/YYYY
+            check('mainDishes', 'Please check the main dishes').not(),
+            check('sideDishes', 'Please check the side dishes').not(),
+            check('salads', 'Please check the salads').not(),
+            check('desserts', 'Please check the desserts').not(),
         ]
     ], 
     async (req, res) => {
@@ -70,19 +83,22 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { restaurant, date, mainDishes, sideDishes, salads, desserts } = req.body;
+        const { id } = req.user;
+        const { date, mainDishes, sideDishes, salads, desserts } = req.body;
+
+        const newDate = moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
         try {
 
-            let menu = await Menu.findOne({ date });
+            let menu = await Menu.findOne({ newDate });
 
             if (menu) {
                 return res.status(400).json({ errors: [{ msg: 'Already exists menu to this date' }] });
             }
 
             menu = new Menu({
-                restaurant,
-                date,
+                restaurant: id,
+                date: newDate,
                 mainDishes,
                 sideDishes,
                 salads,
@@ -149,23 +165,50 @@ router.put(
     }
 );
 
-// @route   DELETE api/menu
+// @route   DELETE api/menu/:date
 // @desc    delete menu
 // @access  Public
-router.delete('/:id', auth,
+router.delete('/:date', auth,
     async (req, res) => {
-
-        const { id } = req.params;
+        const { id } = req.user;
+        const { date } = req.params;
 
         try {
-
-            let menu = await Menu.findOne({ _id: id });
+            let menu = await Menu.findOne({ restaurant: id, date });
 
             if (!menu) {
                 return res.status(400).json({ errors: [{ msg: 'Menu does not exists' }] });
             }
 
-            await restaurant.remove({ _id: id });
+            await menu.remove({ restaurant: id, date });
+
+            const response = {
+                msg: "Menu removed successfuly",
+            }
+
+            res.send(response);
+
+        } catch (err) {
+            console.error(err.message);
+            return res.status(500).send('Server error');
+        } 
+    }
+);
+
+// @route   DELETE api/menu
+// @desc    delete menu
+// @access  Public
+router.delete('/', auth,
+    async (req, res) => {
+        try {
+
+            let menu = await Menu.findOne();
+
+            if (!menu) {
+                return res.status(400).json({ errors: [{ msg: 'Menu does not exists' }] });
+            }
+
+            await menu.remove();
 
             const response = {
                 msg: "Menu successfully deleted",

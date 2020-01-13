@@ -14,6 +14,18 @@ const Restaurant = require('../../models/restaurant');
 // @access  Public
 router.get('/', auth, (req, res) => res.send('Auth route'));
 
+// @route   GET api/auth/users
+// @desc    Authenticate restaurants & get token
+// @access  Public
+router.get('/users', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        res.json(user);
+    } catch (err) {
+        res.status(500).send('Server Error');
+    }
+})
+
 // @route   POST api/auth/users
 // @desc    Authenticate user & get token
 // @access  Public
