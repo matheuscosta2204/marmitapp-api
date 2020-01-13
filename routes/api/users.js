@@ -95,12 +95,11 @@ router.post(
 // @desc    update users' favorites restaurants
 // @access  Public
 router.put(
-    '/', 
+    '/favorites', 
     [
         auth,
         [
-            check('id', 'Id is required').not().isEmpty(),
-            check('favorites', 'Please check favorites list').not().isEmpty()
+            check('restaurantId', 'Please check favorites list').not().isEmpty()
         ]
     ], 
     async (req, res) => {      
@@ -109,17 +108,28 @@ router.put(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { id, favorites } = req.body;
+        const { id } = req.user;
+        const { restaurantId, type } = req.body;
 
         try {
 
             const user = await User.findOne({ _id: id });
 
-            user.favorites = favorites;
+            switch(type) {
+                case "add":
+                    user.favorites = [...user.favorites, restaurantId];
+                break;
+                case "remove":
+                    user.favorites = user.favorites.filter(favorite => favorite !== restaurantId);
+                break;
+                default:
+                    res.status(400).send('You must inform type request!');
+                break;
+            }
 
             await user.save();
 
-            res.send(user);
+            res.send(user.favorites);
         } catch (err) {
             console.error(err.message);
             res.status(500).send('Server Error');
