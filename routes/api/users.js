@@ -121,7 +121,7 @@ router.put(
                     user.favorites = [...user.favorites, restaurantId];
                 break;
                 case "remove":
-                    user.favorites = user.favorites.filter(favorite => favorite !== restaurantId);
+                    user.favorites = user.favorites.splice( user.favorites.indexOf(restaurantId), 1 );
                 break;
                 default:
                     res.status(400).send('You must inform type request!');
