@@ -99,6 +99,7 @@ router.put(
     [
         auth,
         [
+            check('type', 'Please inform type').not().isEmpty(),
             check('restaurantId', 'Please check favorites list').not().isEmpty()
         ]
     ], 
