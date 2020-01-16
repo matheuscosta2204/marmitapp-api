@@ -92,15 +92,12 @@ router.get('/filter/:filter', async (req, res) => {
 // @route   GET api/restaurant/favorites/:page/:limit
 // @desc    get favorites restaurants of a user
 // @access  Public
-router.get('/favorites/:page/:limit', auth, async (req, res) => {
+router.get('/favorites', auth, async (req, res) => {
     try {
         const { id } = req.user;
-        const { page, limit } = req.params;
-
         const user = await User.findOne({ _id: id });
-        const restaurants = await Restaurant.find({ _id: { $in: user.favorites }})
-                                                .skip((Number(limit) * page) - Number(limit))
-                                                .limit(Number(limit));
+        const restaurants = await Restaurant.find({ _id: { $in: user.favorites }});
+
         res.send(restaurants);
     } catch (err) {
         console.error(err.message);
