@@ -97,7 +97,7 @@ router.get('/favorites/:page/:limit', auth, async (req, res) => {
         const { id } = req.user;
         const { page, limit } = req.params;
 
-        const user = await User.find({ _id: id });
+        const user = await User.findOne({ _id: id });
         const restaurants = await Restaurant.find({ _id: { $in: user.favorites }})
                                                 .skip((Number(limit) * page) - Number(limit))
                                                 .limit(Number(limit));
