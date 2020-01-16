@@ -89,12 +89,12 @@ router.get('/filter/:filter', async (req, res) => {
     }
 });
 
-// @route   GET api/restaurant/favorites/:id
+// @route   GET api/restaurant/favorites/
 // @desc    get favorites restaurants of a user
 // @access  Public
-router.get('/favorites/:id', auth, async (req, res) => {
+router.get('/favorites', auth, async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.user;
         const user = await User.find({ _id: id });
         const restaurants = await Restaurant.find({ _id: { $in: user.favorites }});
         res.send(restaurants);
