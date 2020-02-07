@@ -229,6 +229,7 @@ router.put(
             check('address', 'Please include a valid address').not().isEmpty(),
             check('zipCode', 'Please include a valid zip code').not().isEmpty().isNumeric(),
             check('number', 'Please include a valid street number').not().isEmpty().isNumeric(),
+            check('whatsapp', 'Whatsapp indicator is required').not(),
             check('phone', 'Please include a valid phone').not().isEmpty().isNumeric(),
             check('logo', 'Logo is required').not().isEmpty(),
             check('active', 'Active indicator is required').not()
@@ -241,7 +242,7 @@ router.put(
         }
 
         const { id } = req.user;
-        const { address, zipCode, number, phone, logo, active } = req.body;
+        const { address, zipCode, number, whatsapp, phone, logo, active } = req.body;
 
         try {
 
@@ -254,6 +255,7 @@ router.put(
             restaurant.address = address
             restaurant.zipCode = zipCode;
             restaurant.number = number;
+            restaurant.whatsapp = whatsapp;
             restaurant.phone = phone;
             restaurant.logo = logo;
             restaurant.active = active;

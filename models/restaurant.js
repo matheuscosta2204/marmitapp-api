@@ -31,6 +31,10 @@ const RestaurantSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    whatsapp: {
+        type: Boolean,
+        default: false
+    },
     phone: {
         type: String,
         default: ''
