@@ -124,7 +124,7 @@ router.put(
     [
         auth,
         [
-            check('id', 'Id is required').not().isEmpty(),
+            check('_id', 'Id is required').not().isEmpty(),
             check('date', 'Date is required').not().isEmpty(), //YYYY-MM-DD
             check('mainDishes', 'Please check the main dishes').not().isArray().custom(array => array.lenght <= 3),
             check('sideDishes', 'Please check the side dishes').not().isArray().custom(array => array.lenght <= 5),
@@ -138,11 +138,11 @@ router.put(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { id, date, mainDishes, sideDishes, salads, desserts } = req.body;
+        const { _id, date, mainDishes, sideDishes, salads, desserts } = req.body;
 
         try {
 
-            let menu = await Menu.findOne({ _id: id });
+            let menu = await Menu.findOne({ _id });
 
             if (!menu) {
                 return res.status(400).json({ errors: [{ msg: 'Menu does not exists' }] });
