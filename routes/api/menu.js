@@ -94,7 +94,15 @@ router.post(
             let menu = await Menu.findOne({ _id });
 
             if (menu) {
-                await menu.remove({ _id });
+                menu.date = date;
+                menu.mainDishes = mainDishes;
+                menu.sideDishes = sideDishes;
+                menu.salads = salads;
+                menu.desserts = desserts;
+
+                await menu.save();
+
+                res.send(menu);
             } else {
                 let menu2 = await Menu.findOne({ date: newDate });
 
