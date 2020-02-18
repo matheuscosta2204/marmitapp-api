@@ -90,7 +90,7 @@ router.post(
 
         try {
 
-            let menu = await Menu.findOne({ newDate });
+            let menu = await Menu.findOne({ date: newDate });
 
             if (menu) {
                 return res.status(400).json({ errors: [{ msg: 'Already exists menu to this date' }] });
