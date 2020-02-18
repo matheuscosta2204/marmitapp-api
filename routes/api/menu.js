@@ -126,10 +126,10 @@ router.put(
         [
             check('_id', 'Id is required').not().isEmpty(),
             check('date', 'Date is required').not().isEmpty(), //YYYY-MM-DD
-            check('mainDishes', 'Please check the main dishes').not().isArray().custom(array => array.lenght <= 3),
-            check('sideDishes', 'Please check the side dishes').not().isArray().custom(array => array.lenght <= 5),
-            check('salads', 'Please check the salads').not().isArray().custom(array => array.lenght <= 3),
-            check('desserts', 'Please check the desserts').not().isArray().custom(array => array.lenght <= 3),
+            check('mainDishes', 'Please check the main dishes').not(),
+            check('sideDishes', 'Please check the side dishes').not(),
+            check('salads', 'Please check the salads').not(),
+            check('desserts', 'Please check the desserts').not(),
         ]
     ], 
     async (req, res) => {
