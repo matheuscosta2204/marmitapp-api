@@ -91,14 +91,16 @@ router.post(
 
         try {
 
-            let menu = await Menu.findOne({ date: newDate });
+            let menu = await Menu.findOne({ _id });
 
             if (menu) {
-                if(menu._id === _id) {
-                    await menu.remove({ _id, date: newDate });
-                } else {
-                    return res.status(400).json({ errors: [{ msg: 'Already exists menu to this date' }] });
-                }
+                await menu.remove({ _id });
+            }
+
+            let menu2 = await Menu.findOne({ date: newDate });
+
+            if (menu2) {
+                return res.status(400).json({ errors: [{ msg: 'Already exists menu to this date' }] });
             }
 
             menu = new Menu({
