@@ -95,15 +95,7 @@ router.post(
 
             if (menu) {
                 if(menu._id === _id) {
-                    menu.date = date;
-                    menu.mainDishes = mainDishes;
-                    menu.sideDishes = sideDishes;
-                    menu.salads = salads;
-                    menu.desserts = desserts;
-
-                    await menu.save();
-
-                    res.send(menu);
+                    await menu.remove({ _id, date: newDate });
                 }
                 return res.status(400).json({ errors: [{ msg: 'Already exists menu to this date' }] });
             }
