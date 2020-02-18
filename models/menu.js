@@ -12,25 +12,29 @@ const MenuSchema = new mongoose.Schema({
     },
     mainDishes: {
         type: [{
-            type: String
+            description: { type: String },
+            value: { type: Number }
         }],
         validate: [value => { return value.length <= 3}, 'Maximum 3 dishes']
     },
     sideDishes: {
         type: [{
-            type: String
+            description: { type: String },
+            value: { type: Number }
         }],
         validate: [value => { return value.length <= 5}, 'Maximum 5 dishes']
     },
     salads: {
         type: [{
-            type: String
+            description: { type: String },
+            value: { type: Number }
         }],
         validate: [value => { return value.length <= 3}, 'Maximum 3 dishes']
     },
     desserts: {
         type: [{
-            type: String
+            description: { type: String },
+            value: { type: Number }
         }],
         validate: [value => { return value.length <= 3}, 'Maximum 3 dishes']
     },
