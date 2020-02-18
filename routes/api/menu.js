@@ -96,8 +96,9 @@ router.post(
             if (menu) {
                 if(menu._id === _id) {
                     await menu.remove({ _id, date: newDate });
+                } else {
+                    return res.status(400).json({ errors: [{ msg: 'Already exists menu to this date' }] });
                 }
-                return res.status(400).json({ errors: [{ msg: 'Already exists menu to this date' }] });
             }
 
             menu = new Menu({
