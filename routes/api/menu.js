@@ -70,7 +70,6 @@ router.post(
     [
         auth,
         [
-            check('_id', 'Menu(_id) is required').not().isEmpty(),
             check('date', 'Date is required').not().isEmpty(), //DD/MM/YYYY
             check('mainDishes', 'Please check the main dishes').not(),
             check('sideDishes', 'Please check the side dishes').not(),
@@ -85,28 +84,18 @@ router.post(
         }
 
         const { id } = req.user;
-        const { _id, date, mainDishes, sideDishes, salads, desserts } = req.body;
+        const { date, mainDishes, sideDishes, salads, desserts } = req.body;
 
         const newDate = moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD');
 
         try {
 
-            let menu = await Menu.findOne({ _id });
+            let menu = await Menu.findOne({ date: newDate });
 
             if (menu) {
-                menu.date = date;
-                menu.mainDishes = mainDishes;
-                menu.sideDishes = sideDishes;
-                menu.salads = salads;
-                menu.desserts = desserts;
-
-                await menu.save();
-
-                res.send(menu);
-            } else {
-                let menu2 = await Menu.findOne({ date: newDate });
-
-                if (menu2) {
+                if (menu.restaurant === id) {
+                    await menu.remove({ restaurant: id, date: newDate });
+                } else {
                     return res.status(400).json({ errors: [{ msg: 'Already exists menu to this date' }] });
                 }
             }
