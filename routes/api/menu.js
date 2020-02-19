@@ -55,6 +55,7 @@ router.get('/:id', auth, async (req, res) => {
     try {
         const { id } = req.params;
         const menu = await Menu.findOne({ _id: id });
+
         res.send(menu);
     } catch (err) {
         console.error(err.message);
@@ -140,6 +141,8 @@ router.put(
 
         const { _id, date, mainDishes, sideDishes, salads, desserts } = req.body;
 
+        const newDate = moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD');
+
         try {
 
             let menu = await Menu.findOne({ _id });
@@ -148,7 +151,7 @@ router.put(
                 return res.status(400).json({ errors: [{ msg: 'Menu does not exists' }] });
             }
 
-            menu.date = date;
+            menu.date = newDate;
             menu.mainDishes = mainDishes;
             menu.sideDishes = sideDishes;
             menu.salads = salads;
