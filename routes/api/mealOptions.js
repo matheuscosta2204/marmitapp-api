@@ -13,7 +13,7 @@ const MealOptions = require('../../models/mealOptions');
 router.get('/', auth, async (req, res) => {
     try {
         const { id } = req.user;
-        const mealOptions = await MealOptions.find({ restaurant: id });
+        const mealOptions = await MealOptions.findOne({ restaurant: id });
         res.send(mealOptions);
     } catch (err) {
         console.error(err.message);
@@ -65,7 +65,7 @@ router.post(
 
             mealOptions = new MealOptions({
                 restaurant: id,
-                options
+                options: options
             });
 
             await mealOptions.save();
