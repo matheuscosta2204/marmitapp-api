@@ -22,12 +22,12 @@ router.get('/', auth, async (req, res) => {
 });
 
 // @route   GET api/mealOptions/:id
-// @desc    get all mealOptions by unique id
+// @desc    get all mealOptions by restaurant id as parameter
 // @access  Public
 router.get('/:id', auth, async (req, res) => {
     try {
         const { id } = req.params;
-        const mealOptions = await MealOptions.findOne({ _id: id });
+        const mealOptions = await MealOptions.findOne({ restaurant: id });
         res.send(mealOptions);
     } catch (err) {
         console.error(err.message);
