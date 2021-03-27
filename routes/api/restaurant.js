@@ -232,7 +232,9 @@ router.put(
             check('whatsapp', 'Whatsapp indicator is required').not(),
             check('phone', 'Please include a valid phone').not().isEmpty().isNumeric(),
             check('logo', 'Logo is required').not().isEmpty(),
-            check('active', 'Active indicator is required').not()
+            check('active', 'Active indicator is required').not(),
+            check('distanceLimit', 'Please include a valid distance limit').not().isEmpty().isNumeric(),
+            check('paymentWay', 'Please, include valid payment ways').not().isEmpty()
         ]
     ],
     async (req, res) => {
@@ -242,7 +244,7 @@ router.put(
         }
 
         const { id } = req.user;
-        const { address, zipCode, number, whatsapp, phone, logo, active } = req.body;
+        const { address, zipCode, number, whatsapp, phone, logo, active, distanceLimit, paymentWay } = req.body;
 
         try {
 
@@ -259,6 +261,8 @@ router.put(
             restaurant.phone = phone;
             restaurant.logo = logo;
             restaurant.active = active;
+            restaurant.distanceLimit = distanceLimit;
+            restaurant.paymentWay = paymentWay;
 
             await restaurant.save();
 

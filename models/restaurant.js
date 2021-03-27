@@ -51,6 +51,14 @@ const RestaurantSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    distanceLimit: {
+        type: Number,
+        default: 5
+    },
+    paymentWay: {
+        type: mongoose.Schema.Types.Mixed,
+        required: true
     }
 });
 
