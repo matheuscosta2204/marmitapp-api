@@ -62,7 +62,7 @@ router.post(
             if (mealOptions && mealOptions.options.length >= 5) {
                 return res.status(400).json({ errors: [{ msg: 'Maximum 5 options' }] });
             }
-
+            
             mealOptions = new MealOptions({
                 restaurant: id,
                 options: options

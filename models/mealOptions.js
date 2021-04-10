@@ -10,7 +10,11 @@ const MealOptionsSchema = new mongoose.Schema({
         type: [{
             title: { type: String },
             description: { type: String },
-            price: { type: Number }
+            price: { type: Number },
+            main: { type: Object },
+            side: { type: Object },
+            salads: { type: Object },
+            deserts: { type: Object }
         }],
         validate: [value => { return value.length <= 5}, 'Maximum 5 options']
     },
