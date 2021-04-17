@@ -26,6 +26,22 @@ const UserSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    address: {
+        type: {
+            cep: {
+                type: Number
+            },
+            street: {
+                type: String
+            },
+            number: {
+                type: Number
+            },
+            neighborhood: {
+                type: String
+            }
+        }
     }
 });
 

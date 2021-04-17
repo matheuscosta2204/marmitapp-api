@@ -137,4 +137,49 @@ router.put(
         }
 });
 
+// @route   PUT api/users/address
+// @desc    update users' address
+// @access  Public
+router.put(
+    '/address', 
+    [
+        auth,
+        [
+            check('cep', 'Please check the cep').not().isEmpty(),
+            check('street', 'Please check the street').not().isEmpty(),
+            check('number', 'Please check the number').not().isEmpty(),
+            check('neighborhood', 'Please check the neighborhood').not().isEmpty()
+        ]
+    ], 
+    async (req, res) => {      
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { id } = req.user;
+        const { cep, street, number, neighborhood } = req.body;
+
+        try {
+
+            const user = await User.findOne({ _id: id });
+
+            const address = {
+                cep,
+                street,
+                number,
+                neighborhood
+            }
+
+            user.address = address;
+
+            await user.save();
+
+            res.send(user.address);
+        } catch (err) {
+            console.error(err.message);
+            res.status(500).send('Server Error');
+        }
+});
+
 module.exports = router;
