@@ -30,7 +30,8 @@ router.post(
     [
         check('name', 'Name is required').not().isEmpty(),
         check('email', 'Please include a valid email').isEmail(),
-        check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
+        check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 }),
+        check('celphone', 'Celphone is required').not().isEmpty()
     ], 
     async (req, res) => {
         const errors = validationResult(req);
@@ -38,7 +39,7 @@ router.post(
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { name, email, password } = req.body;
+        const { name, email, password, celphone } = req.body;
 
         try {
 
@@ -59,6 +60,7 @@ router.post(
                 name,
                 email,
                 avatar,
+                celphone,
                 password
             })
 
